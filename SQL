@@ -157,6 +157,6 @@ CREATE DATABASE "Agreement"
 
                                     ALTER TABLE public.seller
                                         OWNER to postgres;
-
+dfgdsa
 
 
