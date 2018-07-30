@@ -1,161 +1,128 @@
-CREATE DATABASE "Agreement"
-WITH
-OWNER = postgres
-ENCODING = 'UTF8'
-LC_COLLATE = 'Russian_Russia.1251'
-LC_CTYPE = 'Russian_Russia.1251'
-TABLESPACE = pg_default
-CONNECTION LIMIT = -1;
-
-CREATE TABLE public."Agreement"
+CREATE TABLE public."AGREEMENT"
 (
-  "Id_Agreement"              INTEGER NOT NULL,
-  "Start"                    DATE,
-  "End"                      DATE,
-  "Client_id_Client"          INTEGER NOT NULL,
-  Seller_id_seller            INTEGER,
-  "Spec_id_Spec"              INTEGER,
-  "Spec_Products_id_Products" INTEGER,
-  CONSTRAINT "Agreement_pkey" PRIMARY KEY ("Id_Agreement")
+  "ID"                        INTEGER NOT NULL,
+  "START"                     DATE,
+  "END"                       DATE,
+  "CLIENT_ID"                 INTEGER NOT NULL,
+  "SELLER_ID"                 INTEGER,
+  "SPEC_ID"                   INTEGER,
+  "SPEC_PRODUCTS_ID_PRODUCTS" INTEGER,
+  CONSTRAINT "AGREEMENT_PKEY" PRIMARY KEY ("ID")
 )
 WITH (
 OIDS = FALSE
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public."Agreement"
-  OWNER TO postgres;
-
-
-CREATE TABLE public."Bank"
+CREATE TABLE public."BANK"
 (
-  "Name_Of_Bank" "char",
-  "Id_Bank"     INTEGER NOT NULL,
-  Account2     "char",
-  Account1     "char",
-  "MFO"        "char",
-  CONSTRAINT "Bank_pkey" PRIMARY KEY ("Id_Bank")
+  "NAME"         "char",
+  "ID"           INTEGER NOT NULL,
+  "ACCOUNT2"     "char",
+  "ACCOUNT1"     "char",
+  "MFO"          "char",
+  CONSTRAINT "BANK_PKEY" PRIMARY KEY ("ID")
 )
 WITH (
 OIDS = FALSE
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public."Bank"
-  OWNER TO postgres;
-
-CREATE TABLE public."Client"
+CREATE TABLE public."CLIENT"
 (
-  "Id_Client" INTEGER NOT NULL,
-  "Name"     "char",
+  "ID"       INTEGER NOT NULL,
+  "NAME"     "char",
   "EDRPOU"   "char",
-  "Director" "char",
-  CONSTRAINT "Client_pkey" PRIMARY KEY ("Id_Client")
+  "DIRECTOR" "char",
+  CONSTRAINT "CLIENT_PKEY" PRIMARY KEY ("ID")
 )
 WITH (
 OIDS = FALSE
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public."Client"
-  OWNER TO postgres;
-
-CREATE TABLE public."Products"
+CREATE TABLE public."PRODUCTS"
 (
-  "Id_Products" INTEGER NOT NULL,
-  "Name"       "char",
-  CONSTRAINT "Products_pkey" PRIMARY KEY ("Id_Products")
+  "ID"         INTEGER NOT NULL,
+  "NAME"       "char",
+  CONSTRAINT "PRODUCTS_PKEY" PRIMARY KEY ("ID")
 )
 WITH (
 OIDS = FALSE
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public."Products"
-  OWNER TO postgres;
-
-
-CREATE TABLE public."Spec"
+CREATE TABLE public."SPECIFICATION"
 (
-  "Id_Spec"              INTEGER NOT NULL,
-  "Price"               DOUBLE PRECISION,
-  Quantity              DOUBLE PRECISION,
-  Mesure                "char",
-  "Products_id_Products" INTEGER NOT NULL,
-  CONSTRAINT "Spec_pkey" PRIMARY KEY ("Id_Spec", "Products_id_Products")
+  "ID"                  INTEGER NOT NULL,
+  "PRICE"               DOUBLE PRECISION,
+  "QUANTITY"            DOUBLE PRECISION,
+  "MESURE"              "char",
+  "PRODUCTS_ID"         INTEGER NOT NULL,
+  CONSTRAINT "SPECIFICATION_PKEY" PRIMARY KEY ("ID", "PRODUCTS_ID")
 )
 WITH (
 OIDS = FALSE
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public."Spec"
-  OWNER TO postgres;
 
-CREATE TABLE public."User"
+CREATE TABLE public."USER"
 (
-  "Id_User"    INTEGER NOT NULL,
-  "Name"      "char",
-  Password    "char",
-  Role_id_role INTEGER,
-  CONSTRAINT "User_pkey" PRIMARY KEY ("Id_User")
+  "ID"         INTEGER NOT NULL,
+  "NAME"       "char",
+  "PASSWORLD"  "char",
+  "ROLE_ID"     INTEGER,
+  CONSTRAINT "USER_PKEY" PRIMARY KEY ("ID")
 )
 WITH (
 OIDS = FALSE
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public."User"
-  OWNER TO postgres;
 
-
-CREATE TABLE public.adress
+CREATE TABLE public."ADDRESS"
 (
-  Id_adress  INTEGER NOT NULL,
-  Street    "char",
-  Home      "char",
-  Apartment "char",
-  City      "char",
-  CONSTRAINT adress_pkey PRIMARY KEY (Id_adress)
+  "ID"       INTEGER NOT NULL,
+  "STREET"    "char",
+  "HOME"      "char",
+  "APARTMENT" "char",
+  "CITY"      "char",
+  CONSTRAINT ADDRESS_PKEY PRIMARY KEY (ID)
 )
 WITH (
 OIDS = FALSE
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public.adress
-  OWNER TO postgres;
 
-CREATE TABLE public.role
+CREATE TABLE public."ROLE"
 (
-  Id_role INTEGER NOT NULL,
-  Type   "char",
-  CONSTRAINT role_pkey PRIMARY KEY (Id_role)
+  "ID"      INTEGER NOT NULL,
+  "TYPE"   "char",
+  CONSTRAINT ROLE_PKEY PRIMARY KEY (ID)
 )
 WITH (
 OIDS = FALSE
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public.role
-  OWNER TO postgres;
 
-CREATE TABLE public.seller
+CREATE TABLE public."SELLER"
 (
-  Id_seller   INTEGER NOT NULL,
-  "Name"     "char",
+  "ID"       INTEGER NOT NULL,
+  "NAME"     "char",
   "EDRPOU"   "char",
-  "Director" "char",
+  "DIREKTOR" "char",
   "NDS"      BOOLEAN,
-  CONSTRAINT seller_pkey PRIMARY KEY (Id_seller)
+  CONSTRAINT SELLER_PKEY PRIMARY KEY (ID)
 )
 WITH (
 OIDS = FALSE
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public.seller
-  OWNER TO postgres;
+
 
 
 
