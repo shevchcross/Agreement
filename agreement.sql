@@ -119,7 +119,7 @@ CREATE TABLE public."SELLER"
 )
 WITH (
 OIDS = FALSE
-)
+)--------------------------------------------------------------------------------------------------------------------------------------------------
 TABLESPACE pg_default;
 
 CREATE TABLE public."SELLER_HAS_AGREEMENT"
@@ -135,13 +135,13 @@ OIDS = FALSE
 )
 TABLESPACE pg_default;
 
-CREATE TABLE public."AGREEMENT_has_CLIENT"
+CREATE TABLE public."AGREEMENT_HAS_CLIENT"
 (
   "CLIENT_ID"                    INTEGER NOT NULL,
   "AGREEMENT_ID"                 INTEGER NOT NULL,
   "AGREEMENT_SPECIFICATION_ID"   INTEGER NOT NULL,
 
-  CONSTRAINT AGREEMENT_has_CLIENT UNIQUE ("CLIENT_ID", "AGREEMENT_ID", "AGREEMENT_SPECIFICATION_ID")
+  CONSTRAINT AGREEMENT_HAS_CLIENT UNIQUE ("CLIENT_ID", "AGREEMENT_ID", "AGREEMENT_SPECIFICATION_ID")
 )
 WITH (
 OIDS = FALSE
