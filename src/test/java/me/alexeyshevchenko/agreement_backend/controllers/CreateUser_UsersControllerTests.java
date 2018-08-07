@@ -150,7 +150,6 @@ public class CreateUser_UsersControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.notNullValue()));
-
     }
 
     protected String json(Object o) throws IOException {
