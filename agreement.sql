@@ -3,10 +3,8 @@ CREATE TABLE public."AGREEMENT"
   "ID"                        INTEGER NOT NULL,
   "START"                     DATE,
   "END"                       DATE,
-  "CLIENT_ID"                 INTEGER NOT NULL,
-  "SELLER_ID"                 INTEGER,
-  "SPEC_ID"                   INTEGER,
-  "SPEC_PRODUCTS_ID_PRODUCTS" INTEGER,
+  "SPECIFICATION_ID"          INTEGER NOT NULL,
+  "NAMBER"                    varchar(50),
   CONSTRAINT "AGREEMENT_PKEY" PRIMARY KEY ("ID")
 )
 WITH (
