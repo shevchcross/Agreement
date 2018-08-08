@@ -1,5 +1,6 @@
 package me.alexeyshevchenko.agreement_backend.dto;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -13,6 +14,8 @@ public class UserDTO {
     @NotNull
     @Size(min=6, max=30)
     private String password;
+    @NotNull
+    @Min(0)
     private int id;
 
     public UserDTO(String login, String password, int id) {

@@ -2,6 +2,7 @@ package me.alexeyshevchenko.agreement_backend.controllers;
 
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
 import me.alexeyshevchenko.agreement_backend.Services.UsersService;
+import me.alexeyshevchenko.agreement_backend.errors.IdException;
 import me.alexeyshevchenko.agreement_backend.errors.LoginPasswordException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -41,5 +42,19 @@ public class UsersController {
             throw new LoginPasswordException("Incorrect Login or password, Please check and try again");
         }
 
+    }
+
+    @PostMapping(value = "/get", consumes = {"application/json"}, produces = "application/json")
+    public @ResponseBody UserDTO getUserById (@RequestBody @Valid UserDTO user, BindingResult result) throws IdException {
+
+        if (result.hasErrors()) {
+            throw new IdException("Incorrect Id");
+        }
+        UserDTO userById =  usersService.getUserById(user.getId());
+        if (user.getId()==(userById.getId())){
+            return userById;
+        }else {
+            throw new IdException("Incorrect Id");
+        }
     }
 }
