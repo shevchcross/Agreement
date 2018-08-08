@@ -7,14 +7,6 @@ import javax.validation.constraints.Size;
  * Created by ${Aleksey} on 03.08.2018.
  */
 public class UserDTO {
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     @NotNull
     @Size(min=8, max=30)
     private String login;
@@ -36,6 +28,14 @@ public class UserDTO {
         this.login = login;
         this.password = password;
     }
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
 
     public String getLogin() {
         return login;
