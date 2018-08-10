@@ -17,6 +17,20 @@ public class UserDTO {
     @NotNull
     @Min(0)
     private int id;
+    @NotNull
+    @Size(min=3, max=30)
+    private String lastName;
+    @NotNull
+    @Size(min=3, max=30)
+    private String firstName;
+
+    public UserDTO(@NotNull @Size(min = 8, max = 30) String login, @NotNull @Size(min = 6, max = 30) String password, @NotNull @Min(0) int id, @NotNull @Size(min = 3, max = 30) String lastName, @NotNull @Size(min = 3, max = 30) String firstName) {
+        this.login = login;
+        this.password = password;
+        this.id = id;
+        this.lastName = lastName;
+        this.firstName = firstName;
+    }
 
     public UserDTO(String login, String password, int id) {
         this.login = login;
@@ -31,6 +45,23 @@ public class UserDTO {
         this.login = login;
         this.password = password;
     }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
     public int getId() {
         return id;
     }

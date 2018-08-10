@@ -72,9 +72,9 @@ public class GetUserById_UsersControllerTest {
 
     @Test
     public void getUserById() throws Exception {
-        UserDTO user = new UserDTO("user1111", "user1111", 2);
+        UserDTO user = new UserDTO("user1111", "user1111", 1);
         String userJson = json(user);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users/get")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/"+user.getId())
                 .contentType(contentType)
                 .content(userJson);
         Mockito.when(usersService.getUserById(user.getId())).thenReturn(user);
@@ -86,10 +86,10 @@ public class GetUserById_UsersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(user.getId())));
     }
     @Test
-    public void getUserByIdWhereIdIsNegative() throws Exception {
-        UserDTO user = new UserDTO("user1111", "user1111", -1);
+    public void getUserByIdWhereIdIsNegativeIfCheck() throws Exception {
+        UserDTO user = new UserDTO("user1111", "user1111", 1);
         String userJson = json(user);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users/get")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/"+(-1))
                 .contentType(contentType)
                 .content(userJson);
         Mockito.when(usersService.getUserById(user.getId())).thenReturn(user);
@@ -98,14 +98,16 @@ public class GetUserById_UsersControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(400)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.notNullValue()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(),
+                        Matchers.is("Incorrect Id"))));
     }
+
     @Test
-    public void getUserByIdNotFondId() throws Exception {
+    public void getUserByIdNotFoundId() throws Exception {
         UserDTO user = new UserDTO("user1111", "user1111", 10);
         UserDTO user2 = new UserDTO("user2222", "user222", 1);
         String userJson = json(user);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users/get")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/" + user.getId())
                 .contentType(contentType)
                 .content(userJson);
         Mockito.when(usersService.getUserById(user.getId())).thenReturn(user2);
@@ -114,7 +116,7 @@ public class GetUserById_UsersControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(400)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.notNullValue()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(), Matchers.is("User not found"))));
     }
 
 
