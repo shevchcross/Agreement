@@ -80,5 +80,16 @@ public class UsersController {
             throw new UserNotFoundException("User not found");
         }
     }
+    @DeleteMapping(value = "/{id}", produces = "application/json")
+    public @ResponseBody
+    UserDTO deleteUser(@PathVariable("id") int userId) throws IdException, UserNotFoundException {
+
+        UserDTO userById = usersService.getUserById(userId);
+        if (userById != null && userId == (userById.getId())) {
+            return userById;
+        } else {
+            throw new UserNotFoundException("User not found");
+        }
+    }
 }
 

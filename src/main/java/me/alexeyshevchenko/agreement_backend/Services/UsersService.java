@@ -13,10 +13,8 @@ public interface UsersService {
     UserDTO createUser(UserDTO user);
     UserDTO getUserById(int id);
     UserDTO findUserByLogin(String login);
-
-    void updateUser(int id, String login, String passworld);
-
-    void deleteUser(int id);
+    UserDTO updateUser(int id, String login, String passworld);
+    UserDTO deleteUser(int id);
 
 
 }

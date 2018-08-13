@@ -101,7 +101,6 @@ public class GetUserById_UsersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(),
                         Matchers.is("Incorrect Id"))));
     }
-
     @Test
     public void getUserByIdNotFoundId() throws Exception {
         UserDTO user = new UserDTO("user1111", "user1111", 10);
