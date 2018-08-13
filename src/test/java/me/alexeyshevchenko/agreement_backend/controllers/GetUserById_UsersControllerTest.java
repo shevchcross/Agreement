@@ -114,8 +114,8 @@ public class GetUserById_UsersControllerTest {
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(400)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(404)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(), Matchers.is("User not found"))));
     }
 

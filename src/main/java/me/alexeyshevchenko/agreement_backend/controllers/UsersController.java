@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.regex.Pattern;
 
 /**
  * Created by ${Aleksey} on 03.08.2018.
@@ -33,30 +36,26 @@ public class UsersController {
         return usersService.createUser(user);
     }
 
-    @PostMapping(value = "/auth", consumes = {"application/json"}, produces = "application/json")
+    @GetMapping(value = "/bylogin/{login}", consumes = {"application/json"})
     public
     @ResponseBody
-    UserDTO findUserByLogin(@RequestBody @Valid UserDTO user, BindingResult result) throws LoginPasswordException {
-
-        if (result.hasErrors()) {
-            throw new LoginPasswordException("Incorrect Login or password, Please check and try again");
-        }
-        UserDTO userByLogin = usersService.findUserByLogin(user.getLogin());
-        if (user.getPassword().equals(userByLogin.getPassword())) {
-            return userByLogin;
-        } else {
-            throw new LoginPasswordException("Incorrect Login or password, Please check and try again");
-        }
-
+    UserDTO findUserByLogin( @PathVariable("login") String userLogin) throws LoginPasswordException, UserNotFoundException {
+             if (!Pattern.matches("[0-9a-zA-Z]{3,30}", userLogin)){
+             throw new LoginPasswordException("Incorrect Login or password, Please check and try again");
+         }
+        UserDTO userByLogin = usersService.findUserByLogin(userLogin);
+         if(userByLogin == null){
+             throw new UserNotFoundException("User not found");
+         }
+         return userByLogin;
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
     public @ResponseBody UserDTO getUserById(@PathVariable("id") int userId) throws IdException, UserNotFoundException {
-        if (userId < 0) {
-            throw new IdException("Incorrect Id");
-        }
+        if (userId < 0){
+            throw new IdException("Incorrect Id");}
         UserDTO userById = usersService.getUserById(userId);
-        if (userId == (userById.getId())) {
+         if (userById != null && userId == (userById.getId())) {
             return userById;
         } else {
             throw new UserNotFoundException("User not found");

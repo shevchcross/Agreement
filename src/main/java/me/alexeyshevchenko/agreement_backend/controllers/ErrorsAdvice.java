@@ -22,9 +22,15 @@ import javax.validation.ConstraintViolationException;
 @RestControllerAdvice
 public class ErrorsAdvice {
 
-    @ExceptionHandler(value = {LoginPasswordException.class, MethodArgumentNotValidException.class, HttpMessageNotReadableException.class, IdException.class, UserNotFoundException.class})
+    @ExceptionHandler(value = {LoginPasswordException.class, MethodArgumentNotValidException.class, HttpMessageNotReadableException.class, IdException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDTO handleLoginError(Exception e) {
         return new ErrorDTO(400, 400, e.getMessage());
+    }
+
+    @ExceptionHandler(value = {UserNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorDTO handleNotFound(Exception e) {
+        return new ErrorDTO(404, 404, e.getMessage());
     }
 }
