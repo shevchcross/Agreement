@@ -2,8 +2,7 @@ package me.alexeyshevchenko.agreement_backend.controllers;
 
 import me.alexeyshevchenko.agreement_backend.App;
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
-import me.alexeyshevchenko.agreement_backend.Services.UsersService;
-import me.alexeyshevchenko.agreement_backend.errors.LoginPasswordException;
+import me.alexeyshevchenko.agreement_backend.services.UsersService;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -72,7 +71,7 @@ public class CreateUser_UsersControllerTests {
 
     @Test
     public void createUserSuccessful() throws Exception {
-        UserDTO user = new UserDTO("user1111", "user1111");
+        UserDTO user = new UserDTO("user1111", "user1111", 1, "Ivanov", "Ivan");
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users")
                 .contentType(contentType)
@@ -82,14 +81,11 @@ public class CreateUser_UsersControllerTests {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.login", Matchers.is(user.getLogin())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.password", Matchers.is(user.getPassword())));
-
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(user.getId())));
     }
-
-
     @Test
     public void createUserWhenLoginToShort() throws Exception {
-        UserDTO user = new UserDTO("user", "user1111");
+        UserDTO user = new UserDTO("user", "user1111", 1, "Ivanov", "Ivan");
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users")
                 .contentType(contentType)
@@ -105,7 +101,7 @@ public class CreateUser_UsersControllerTests {
     }
     @Test
     public void createUserWhenPasswordTooShort() throws Exception {
-        UserDTO user = new UserDTO("user111111", "user");
+        UserDTO user = new UserDTO("user", "user", 1, "Ivanov", "Ivan");
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users")
                 .contentType(contentType)
@@ -122,7 +118,7 @@ public class CreateUser_UsersControllerTests {
 
     @Test
     public void createUserWhenPasswordNull() throws Exception {
-        UserDTO user = new UserDTO("user111111", null);
+        UserDTO user = new UserDTO("user", null, 1, "Ivanov", "Ivan");
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users")
                 .contentType(contentType)
@@ -138,7 +134,7 @@ public class CreateUser_UsersControllerTests {
     }
     @Test
     public void createUserWhenLoginNull() throws Exception {
-        UserDTO user = new UserDTO(null, "user111111");
+        UserDTO user = new UserDTO(null, "user", 1, "Ivanov", "Ivan");
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users")
                 .contentType(contentType)
@@ -151,6 +147,7 @@ public class CreateUser_UsersControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.notNullValue()));
     }
+
 
     protected String json(Object o) throws IOException {
         MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();

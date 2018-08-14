@@ -2,8 +2,7 @@ package me.alexeyshevchenko.agreement_backend.controllers;
 
 import me.alexeyshevchenko.agreement_backend.App;
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
-import me.alexeyshevchenko.agreement_backend.Services.UsersService;
-import me.alexeyshevchenko.agreement_backend.errors.LoginPasswordException;
+import me.alexeyshevchenko.agreement_backend.services.UsersService;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
