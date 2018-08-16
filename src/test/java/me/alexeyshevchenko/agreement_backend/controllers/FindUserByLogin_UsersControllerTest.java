@@ -2,6 +2,7 @@ package me.alexeyshevchenko.agreement_backend.controllers;
 
 import me.alexeyshevchenko.agreement_backend.App;
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
+import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import me.alexeyshevchenko.agreement_backend.services.UsersService;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -71,42 +72,38 @@ public class FindUserByLogin_UsersControllerTest {
 
     @Test
     public void findUserByLogin() throws Exception {
-        UserDTO user = new UserDTO("user1111", "user1111");
+        UserDTO user = new UserDTO("user1111", "user1111",1, "Ivanov", "Ivan");
+        UserEntity savedUser = new UserEntity();
+        savedUser.setLogin(user.getLogin());
+        savedUser.setFirstName(user.getFirstName());
+        savedUser.setLastName(user.getLastName());
+        savedUser.setPassword(user.getPassword());
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/bylogin/" + user.getLogin())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.findUserByLogin(user.getLogin())).thenReturn(user);
+        Mockito.when(usersService.findUserByLogin(user.getLogin())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.login", Matchers.is(user.getLogin())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.password", Matchers.is(user.getPassword())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.password", Matchers.nullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(user.getLastName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(user.getFirstName())));
             }
-
-    @Test
-    public void findUserByLoginPasswordIncorrect() throws Exception {
-        UserDTO user = new UserDTO("user1111", "user1111");
-        String userJson = json(user);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/bylogin/"+ user.getLogin())
-                .contentType(contentType)
-                .content(userJson);
-        Mockito.when(usersService.findUserByLogin(user.getLogin())).thenReturn(null);
-        mockMvc.perform(request)
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.content().contentType(contentType))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(404)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(404)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(),
-                        Matchers.is("User not found"))));   }
     @Test
     public void findUserByLoginLoginLessThenThree() throws Exception {
-        UserDTO user = new UserDTO("us", "user1111");
+        UserDTO user = new UserDTO("us", "user1111",1, "Ivanov", "Ivan");
+        UserEntity savedUser = new UserEntity();
+        savedUser.setLogin(user.getLogin());
+        savedUser.setFirstName(user.getFirstName());
+        savedUser.setLastName(user.getLastName());
+        savedUser.setPassword(user.getPassword());
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/bylogin/" + user.getLogin())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.findUserByLogin(user.getLogin())).thenReturn(user);
+        Mockito.when(usersService.findUserByLogin(user.getLogin())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
@@ -117,12 +114,17 @@ public class FindUserByLogin_UsersControllerTest {
     }
     @Test
     public void findUserByLoginLoginMoreThenThirty() throws Exception {
-        UserDTO user = new UserDTO("12345678901234567890123456789012", "user1111");
+        UserDTO user = new UserDTO("12345678901234567890123456789012", "user1111",1, "Ivanov", "Ivan");
+        UserEntity savedUser = new UserEntity();
+        savedUser.setLogin(user.getLogin());
+        savedUser.setFirstName(user.getFirstName());
+        savedUser.setLastName(user.getLastName());
+        savedUser.setPassword(user.getPassword());
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/bylogin/" + user.getLogin())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.findUserByLogin(user.getLogin())).thenReturn(user);
+        Mockito.when(usersService.findUserByLogin(user.getLogin())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
@@ -132,13 +134,14 @@ public class FindUserByLogin_UsersControllerTest {
                         Matchers.is("Incorrect Login or password, Please check and try again"))));
     }
     @Test
-    public void findUserByLoginLoginIsNull() throws Exception {
-        UserDTO user = new UserDTO(null, "user1111");
-        String userJson = json(user);
+    public void findUserByLoginSavedUserIsNull() throws Exception {
+        UserDTO user = new UserDTO("123456789012", "user1111",1, "Ivanov", "Ivan");
+        UserEntity savedUser = null;
+              String userJson = json(user);
               MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/bylogin/" + user.getLogin())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.findUserByLogin(user.getLogin())).thenReturn(user);
+        Mockito.when(usersService.findUserByLogin(user.getLogin())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
@@ -150,12 +153,17 @@ public class FindUserByLogin_UsersControllerTest {
 
     @Test
     public void findUserByLoginJsonIsSomeTextWithSpesSimbol() throws Exception {
-        UserDTO user = new UserDTO("user$1*111", "user1111");
+        UserDTO user = new UserDTO("user$1*111", "user1111",1, "Ivanov", "Ivan");
+        UserEntity savedUser = new UserEntity();
+        savedUser.setLogin(user.getLogin());
+        savedUser.setFirstName(user.getFirstName());
+        savedUser.setLastName(user.getLastName());
+        savedUser.setPassword(user.getPassword());
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/bylogin/"+user.getLogin())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.findUserByLogin(user.getLogin())).thenReturn(user);
+        Mockito.when(usersService.findUserByLogin(user.getLogin())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
@@ -165,6 +173,7 @@ public class FindUserByLogin_UsersControllerTest {
                         Matchers.is("Incorrect Login or password, Please check and try again"))));
 
     }
+
     protected String json(Object o) throws IOException {
         MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
         this.mappingJackson2HttpMessageConverter.write(

@@ -1,6 +1,7 @@
 package me.alexeyshevchenko.agreement_backend.controllers;
 import me.alexeyshevchenko.agreement_backend.App;
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
+import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import me.alexeyshevchenko.agreement_backend.services.UsersService;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -69,33 +70,42 @@ public class DeleteUser_UserControllerTest {
 
         @Test
         public void deleteUserById() throws Exception {
-            UserDTO user = new UserDTO("user1111", "user1111", 1);
+            UserDTO user = new UserDTO("user1111", "user1111", 1, "Aleks", "Ivanov");
+            UserEntity savedUser = new UserEntity();
+            savedUser.setLogin(user.getLogin());
+            savedUser.setPassword(user.getPassword());
+            savedUser.setId(user.getId());
+            savedUser.setFirstName(user.getFirstName());
+            savedUser.setLastName(user.getLastName());
             String userJson = json(user);
             MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/users/"+user.getId())
                     .contentType(contentType)
                     .content(userJson);
-            Mockito.when(usersService.getUserById(user.getId())).thenReturn(user);
+            Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
             mockMvc.perform(request)
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(MockMvcResultMatchers.content().contentType(contentType))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.login", Matchers.is(user.getLogin())))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.password", Matchers.is(user.getPassword())))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.login", Matchers.nullValue()))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.password", Matchers.nullValue()))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.nullValue()))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.nullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(user.getId())));
         }
         @Test
         public void deleteUserByIdNotFoundId() throws Exception {
-        UserDTO user = new UserDTO("user1111", "user1111", 10);
-        String userJson = json(user);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/" + user.getId())
-                .contentType(contentType)
-                .content(userJson);
-        Mockito.when(usersService.getUserById(user.getId())).thenReturn(null);
+        UserDTO user = new UserDTO("user1111", "user1111", 1, "Aleks", "Ivanov");
+                        String userJson = json(user);
+            MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/users/"+user.getId())
+                    .contentType(contentType)
+                    .content(userJson);
+            Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(null);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(404)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(), Matchers.is("User not found"))));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(),
+                        Matchers.is("User not found"))));
     }
 
         protected String json(Object o) throws IOException {

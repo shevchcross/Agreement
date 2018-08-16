@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,14 +32,11 @@ import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-/**
- * Created by ${Aleksey} on 03.08.2018.
- */
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = App.class)
 @WebAppConfiguration
-public class CreateUser_UsersControllerTests {
-
+public class FindUserByLoginCheckPassword_UsersControllerTest {
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
             Charset.forName("utf8"));//
@@ -52,6 +50,9 @@ public class CreateUser_UsersControllerTests {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     void setConverters(HttpMessageConverter<?>[] converters) {
@@ -70,114 +71,97 @@ public class CreateUser_UsersControllerTests {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
     }
 
+
     @Test
-    public void createUserSuccessful() throws Exception {
+    public void findUserSuccessfull() throws Exception {
         UserDTO user = new UserDTO("user1111", "user1111", 1, "Ivanov", "Ivan");
         UserEntity savedUser = new UserEntity();
         savedUser.setLogin(user.getLogin());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
+        savedUser.setId(user.getId());
+        String salt = "salt";
+        savedUser.setSalt(salt);
+        String hashedPassword = passwordEncoder.encode(user.getPassword() + salt);
+        savedUser.setPassword(hashedPassword);
         String userJson = json(user);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users/auth")
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.createUser(Mockito.any())).thenReturn(savedUser);
-                mockMvc.perform(request)
+        Mockito.when(usersService.findUserByLogin(Mockito.any())).thenReturn(savedUser);
+        mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
-                        .andExpect(MockMvcResultMatchers.jsonPath("$.login", Matchers.is(user.getLogin())))
-                        .andExpect(MockMvcResultMatchers.jsonPath("$.password", Matchers.nullValue()))
-                        .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(user.getLastName())))
-                        .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(user.getFirstName())));
-    }
+                .andExpect(MockMvcResultMatchers.jsonPath("$.login", Matchers.is(user.getLogin())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(user.getId())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(user.getFirstName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.password", Matchers.nullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(user.getLastName())));}
     @Test
-    public void createUserWhenLoginToShort() throws Exception {
-        UserDTO user = new UserDTO("user", "user1111", 1, "Ivanov", "Ivan");
+    public void findUserUserFromBaseIsNull() throws Exception {
+        UserDTO user = new UserDTO("user1111", "user1111", 1, "Ivanov", "Ivan");
+        UserEntity savedUser = null;
+                String userJson = json(user);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users/auth")
+                .contentType(contentType)
+                .content(userJson);
+        Mockito.when(usersService.findUserByLogin(Mockito.any())).thenReturn(savedUser);
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.content().contentType(contentType))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(404)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(404)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message",  Matchers.allOf(Matchers.notNullValue(),
+                        Matchers.is("User not found"))));}
+
+    @Test
+    public void findUserIncorrectPassword() throws Exception {
+        UserDTO user = new UserDTO("user1111", "user1111", 1, "Ivanov", "Ivan");
         UserEntity savedUser = new UserEntity();
         savedUser.setLogin(user.getLogin());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
-        savedUser.setPassword(user.getPassword());
+        savedUser.setId(user.getId());
+        String salt = "salt";
+        savedUser.setSalt(salt);
+        String hashedPassword = passwordEncoder.encode(user.getPassword() + salt+" ");
+        savedUser.setPassword(hashedPassword);
         String userJson = json(user);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users/auth")
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.createUser(Mockito.any())).thenReturn(savedUser);
+        Mockito.when(usersService.findUserByLogin(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(400)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(),
-                        Matchers.is("Incorrect Login or password, Please check and try again"))));
-
-    }
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message",  Matchers.allOf(Matchers.notNullValue(),
+                        Matchers.is("Incorect password"))));}
     @Test
-    public void createUserWhenPasswordTooShort() throws Exception {
-        UserDTO user = new UserDTO("user", "user", 1, "Ivanov", "Ivan");
+    public void findUserIncorrectLogin() throws Exception {
+        UserDTO user = new UserDTO("us", "user1111", 1, "Ivanov", "Ivan");
         UserEntity savedUser = new UserEntity();
         savedUser.setLogin(user.getLogin());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
-        savedUser.setPassword(user.getPassword());
+        savedUser.setId(user.getId());
+        String salt = "salt";
+        savedUser.setSalt(salt);
+        String hashedPassword = passwordEncoder.encode(user.getPassword() + salt);
+        savedUser.setPassword(hashedPassword);
         String userJson = json(user);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users/auth")
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.createUser(Mockito.any())).thenReturn(savedUser);
+        Mockito.when(usersService.findUserByLogin(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(400)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(),
-                        Matchers.is("Incorrect Login or password, Please check and try again"))));
-
-    }
-
-    @Test
-    public void createUserWhenPasswordNull() throws Exception {
-        UserDTO user = new UserDTO("user", null, 1, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
-        savedUser.setLogin(user.getLogin());
-        savedUser.setFirstName(user.getFirstName());
-        savedUser.setLastName(user.getLastName());
-        savedUser.setPassword(user.getPassword());
-        String userJson = json(user);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users")
-                .contentType(contentType)
-                .content(userJson);
-        Mockito.when(usersService.createUser(Mockito.any())).thenReturn(savedUser);
-        mockMvc.perform(request)
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.content().contentType(contentType))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(400)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(400)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(),
-                        Matchers.is("Incorrect Login or password, Please check and try again"))));
-
-    }
-    @Test
-    public void createUserWhenLoginNull() throws Exception {
-        UserDTO user = new UserDTO(null, "user", 1, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
-        savedUser.setLogin(user.getLogin());
-        savedUser.setFirstName(user.getFirstName());
-        savedUser.setLastName(user.getLastName());
-        savedUser.setPassword(user.getPassword());
-        String userJson = json(user);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users")
-                .contentType(contentType)
-                .content(userJson);
-        Mockito.when(usersService.createUser(Mockito.any())).thenReturn(savedUser);
-        mockMvc.perform(request)
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.content().contentType(contentType))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(400)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(400)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(),
-                        Matchers.is("Incorrect Login or password, Please check and try again"))));
-    }
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message",  Matchers.allOf(Matchers.notNullValue(),
+                        Matchers.is("Incorrect Login, Please check and try again"))));}
 
 
     protected String json(Object o) throws IOException {

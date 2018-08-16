@@ -1,18 +1,17 @@
 package me.alexeyshevchenko.agreement_backend.services;
 
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
+import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 
 /**
  * Created by ${Aleksey} on 03.08.2018.
  */
 public interface UsersService {
 
-    UserDTO createUser(UserDTO user);
-    UserDTO getUserById(int id);
-    UserDTO findUserByLogin(String login);
-    UserDTO updateUser(int id, String login, String passworld);
-    UserDTO deleteUser(int id);
-    UserDTO createUserSafery (UserDTO user);
-
+    UserEntity createUser(UserEntity user);
+    UserEntity getUserById(int id);
+    UserEntity findUserByLogin(String login);
+    UserEntity updateUser(UserEntity user);
+    UserEntity deleteUser(int id);
 
 }

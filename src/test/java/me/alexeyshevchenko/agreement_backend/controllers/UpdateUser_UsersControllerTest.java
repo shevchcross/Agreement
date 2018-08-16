@@ -2,6 +2,7 @@ package me.alexeyshevchenko.agreement_backend.controllers;
 
 import me.alexeyshevchenko.agreement_backend.App;
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
+import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import me.alexeyshevchenko.agreement_backend.services.UsersService;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -72,12 +73,18 @@ public class UpdateUser_UsersControllerTest {
     @Test
     public void updateUser() throws Exception {
         UserDTO userToUpdate = new UserDTO("user1111", "user1111", 1, "Aleks", "Ivanov");
-        UserDTO userFromStorage = new UserDTO("user1111", "user1111", 1, "Aleks", "Ivanov");
+        UserEntity savedUser = new UserEntity();
+        savedUser.setLogin(userToUpdate.getLogin());
+        savedUser.setPassword(userToUpdate.getPassword());
+        savedUser.setId(userToUpdate.getId());
+        savedUser.setFirstName("AAAAAAA");
+        savedUser.setLastName("AAAAAAAAA");
         String userJson = json(userToUpdate);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/users/"+  userToUpdate.getId())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.getUserById(userToUpdate.getId())).thenReturn(userFromStorage);
+        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.updateUser(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
@@ -87,28 +94,41 @@ public class UpdateUser_UsersControllerTest {
     @Test
     public void updateUserIdIsNegative() throws Exception {
         UserDTO userToUpdate = new UserDTO("user1111", "user1111", -1, "Aleks", "Ivanov");
-        UserDTO userFromStorage = new UserDTO("user1111", "user1111", -1, "Aleks", "Ivanov");
+        UserEntity savedUser = new UserEntity();
+        savedUser.setLogin(userToUpdate.getLogin());
+        savedUser.setPassword(userToUpdate.getPassword());
+        savedUser.setId(userToUpdate.getId());
+        savedUser.setFirstName("AAAAAAA");
+        savedUser.setLastName("AAAAAAAAA");
         String userJson = json(userToUpdate);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/users/"+  userToUpdate.getId())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.getUserById(userToUpdate.getId())).thenReturn(userFromStorage);
+        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.updateUser(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(400)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.notNullValue()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(),
+                        Matchers.is("Incorrect Id"))));
     }
     @Test
     public void updateUserlastNameNotValid() throws Exception {
         UserDTO userToUpdate = new UserDTO("user1111", "user1111", -1, "Al", "Ivanov");
-        UserDTO userFromStorage = new UserDTO("user1111", "user1111", -1, "Al", "Ivanov");
+        UserEntity savedUser = new UserEntity();
+        savedUser.setLogin(userToUpdate.getLogin());
+        savedUser.setPassword(userToUpdate.getPassword());
+        savedUser.setId(userToUpdate.getId());
+        savedUser.setFirstName("AAAAAAA");
+        savedUser.setLastName("AAAAAAAAA");
         String userJson = json(userToUpdate);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/users/"+  userToUpdate.getId())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.getUserById(userToUpdate.getId())).thenReturn(userFromStorage);
+        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.updateUser(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
@@ -120,11 +140,18 @@ public class UpdateUser_UsersControllerTest {
     public void updateUserFirstNameNotValid() throws Exception {
         UserDTO userToUpdate = new UserDTO("user1111", "user1111", -1, "Aleksey", "Iv");
         UserDTO userFromStorage = new UserDTO("user1111", "user1111", -1, "Aleksey", "Iv");
+        UserEntity savedUser = new UserEntity();
+        savedUser.setLogin(userToUpdate.getLogin());
+        savedUser.setPassword(userToUpdate.getPassword());
+        savedUser.setId(userToUpdate.getId());
+        savedUser.setFirstName("AAAAAAA");
+        savedUser.setLastName("AAAAAAAAA");
         String userJson = json(userToUpdate);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/users/"+  userToUpdate.getId())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.getUserById(userToUpdate.getId())).thenReturn(userFromStorage);
+        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.updateUser(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
@@ -135,29 +162,41 @@ public class UpdateUser_UsersControllerTest {
     @Test
     public void updateUserNonexistent() throws Exception {
         UserDTO userToUpdate = new UserDTO("user1111", "user1111", 1, "Aleksey", "Ivanov");
-        UserDTO userFromStorage = new UserDTO("user1111", "user1111", 1, "Aleksey", "Ivanov");
+         UserEntity savedUser = new UserEntity();
+        savedUser.setLogin(userToUpdate.getLogin());
+        savedUser.setPassword(userToUpdate.getPassword());
+        savedUser.setId(userToUpdate.getId());
+        savedUser.setFirstName("AAAAAAA");
+        savedUser.setLastName("AAAAAAAAA");
         String userJson = json(userToUpdate);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/users/"+  userToUpdate.getId()+1)
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/users/"+  (userToUpdate.getId()+1))
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.getUserById(userToUpdate.getId())).thenReturn(userFromStorage);
+        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.updateUser(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(400)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(404)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(),
                         Matchers.is("User not found"))));
     }
     @Test
     public void updateUserIdIncorect() throws Exception {
         UserDTO userToUpdate = new UserDTO("user1111", "user1111", 1, "Aleksey", "Ivanov");
-        UserDTO userFromStorage = new UserDTO("user1111", "user1111", 1, "Aleksey", "Ivanov");
+        UserEntity savedUser = new UserEntity();
+        savedUser.setLogin(userToUpdate.getLogin());
+        savedUser.setPassword(userToUpdate.getPassword());
+        savedUser.setId(userToUpdate.getId());
+        savedUser.setFirstName("AAAAAAA");
+        savedUser.setLastName("AAAAAAAAA");
         String userJson = json(userToUpdate);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/users/" +(-2))
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.getUserById(userToUpdate.getId())).thenReturn(userFromStorage);
+        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.updateUser(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))

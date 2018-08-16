@@ -1,6 +1,7 @@
 package me.alexeyshevchenko.agreement_backend.controllers;
 
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
+import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import me.alexeyshevchenko.agreement_backend.services.UsersService;
 import me.alexeyshevchenko.agreement_backend.errors.IdException;
 import me.alexeyshevchenko.agreement_backend.errors.LoginPasswordException;
@@ -38,11 +39,13 @@ public class UsersController {
         }
         String password = user.getPassword();
         String salt = UUID.randomUUID().toString();
-        user.setSalt(salt);
-        String hashedpassword = passwordEncoder.encode(password + salt);
-        user.setPassword(hashedpassword);
+        String hashedPassword = passwordEncoder.encode(password + salt);
+        user.setPassword(hashedPassword);
+        UserEntity userToSave = new UserEntity(user);
+        userToSave.setSalt(salt);
 
-        return usersService.createUser(user);
+        UserEntity newUser = usersService.createUser(userToSave);
+        return new UserDTO(newUser);
     }
 
     @GetMapping(value = "/bylogin/{login}", consumes = {"application/json"})
@@ -52,11 +55,11 @@ public class UsersController {
         if (!Pattern.matches("[0-9a-zA-Z]{3,30}", userLogin)) {
             throw new LoginPasswordException("Incorrect Login or password, Please check and try again");
         }
-        UserDTO userByLogin = usersService.findUserByLogin(userLogin);
+        UserEntity userByLogin = usersService.findUserByLogin(userLogin);
         if (userByLogin == null) {
             throw new UserNotFoundException("User not found");
         }
-        return userByLogin;
+        return new UserDTO(userByLogin);
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
@@ -66,9 +69,9 @@ public class UsersController {
         if (userId < 0) {
             throw new IdException("Incorrect Id");
         }
-        UserDTO userById = usersService.getUserById(userId);
+        UserEntity userById = usersService.getUserById(userId);
         if (userById != null && userId == (userById.getId())) {
-            return userById;
+            return new UserDTO(userById);
         } else {
             throw new UserNotFoundException("User not found");
         }
@@ -79,15 +82,15 @@ public class UsersController {
     @ResponseBody
     UserDTO updateUser(@PathVariable("id") int id,
                        @RequestBody @Valid UserDTO user) throws IdException, UserNotFoundException {
-
-        if (id < 0) {
+        if (id <= 0) {
             throw new IdException("Incorrect Id");
         }
-        if (id == user.getId()) {
-            UserDTO oldUser = usersService.getUserById(id);
+        UserEntity oldUser = usersService.getUserById(id);
+        if (oldUser != null && oldUser.getId() == id) {
             oldUser.setFirstName(user.getFirstName());
             oldUser.setLastName(user.getLastName());
-            return oldUser;
+            UserEntity updatedUser = usersService.updateUser(oldUser);
+            return new UserDTO(updatedUser);
         } else {
             throw new UserNotFoundException("User not found");
         }
@@ -97,14 +100,35 @@ public class UsersController {
     public
     @ResponseBody
     UserDTO deleteUser(@PathVariable("id") int userId) throws IdException, UserNotFoundException {
-
-        UserDTO userById = usersService.getUserById(userId);
-        if (userById != null && userId == (userById.getId())) {
-            return userById;
-        } else {
+        if (userId <= 0) {
+            throw new IdException("Incorrect Id");
+        }
+        UserEntity userById = usersService.getUserById(userId);
+        if (userById == null) {
             throw new UserNotFoundException("User not found");
         }
+        return new UserDTO(userById);
     }
 
+    @PostMapping(value = "/auth")
+    public
+    @ResponseBody
+    UserDTO findUserByLoginCheckPassword(@RequestBody @Valid UserDTO user, BindingResult result) throws LoginPasswordException, UserNotFoundException {
+        if (result.hasErrors()) {
+            throw new LoginPasswordException("Incorrect Login, Please check and try again");
+       }
+        UserEntity userFromBase = usersService.findUserByLogin(user.getLogin());
+        if (userFromBase == null) {
+            throw new UserNotFoundException("User not found");
+        }
+        String passwordFromBase = userFromBase.getPassword();
+        String passwordUser = user.getPassword() + userFromBase.getSalt();
+        if (passwordEncoder.matches(passwordUser, passwordFromBase)) {
+            return new UserDTO(userFromBase);
+        } else {
+            throw new LoginPasswordException("Incorect password");
+        }
+
+    }
 }
 
