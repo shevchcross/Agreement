@@ -106,7 +106,7 @@ public class GetUserById_UsersControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/"+ user.getId())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.getUserById(-1)).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))

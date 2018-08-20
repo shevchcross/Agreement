@@ -1,3 +1,6 @@
 .idea/
+.gradle/
+build/
+target/
 *.iml
 build/errors\

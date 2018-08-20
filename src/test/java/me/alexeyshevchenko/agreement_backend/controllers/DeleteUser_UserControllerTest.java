@@ -77,19 +77,16 @@ public class DeleteUser_UserControllerTest {
             savedUser.setId(user.getId());
             savedUser.setFirstName(user.getFirstName());
             savedUser.setLastName(user.getLastName());
-            String userJson = json(user);
-            MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/users/"+user.getId())
-                    .contentType(contentType)
-                    .content(userJson);
+            MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/users/"+user.getId());
             Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
             mockMvc.perform(request)
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(MockMvcResultMatchers.content().contentType(contentType))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.login", Matchers.nullValue()))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.login", Matchers.is(savedUser.getLogin())))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.password", Matchers.nullValue()))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.nullValue()))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.nullValue()))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(user.getId())));
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(savedUser.getLastName())))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(savedUser.getFirstName())));
+
         }
         @Test
         public void deleteUserByIdNotFoundId() throws Exception {
@@ -107,6 +104,24 @@ public class DeleteUser_UserControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(),
                         Matchers.is("User not found"))));
     }
+    @Test
+    public void deleteUserByIdWhenIDLess0() throws Exception {
+        UserDTO user = new UserDTO("user1111", "user1111", -1, "Aleks", "Ivanov");
+        UserEntity savedUser = new UserEntity();
+        savedUser.setLogin(user.getLogin());
+        savedUser.setPassword(user.getPassword());
+        savedUser.setId(user.getId());
+        savedUser.setFirstName(user.getFirstName());
+        savedUser.setLastName(user.getLastName());
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/users/"+user.getId());
+        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.content().contentType(contentType))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.allOf(Matchers.notNullValue(),
+                        Matchers.is("Incorrect Id"))));}
 
         protected String json(Object o) throws IOException {
             MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();

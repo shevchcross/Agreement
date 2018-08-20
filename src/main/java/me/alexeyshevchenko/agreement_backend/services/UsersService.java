@@ -1,7 +1,7 @@
 package me.alexeyshevchenko.agreement_backend.services;
-
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
 import me.alexeyshevchenko.agreement_backend.models.UserEntity;
+
 
 /**
  * Created by ${Aleksey} on 03.08.2018.
