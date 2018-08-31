@@ -65,7 +65,7 @@ public class UsersController {
     @GetMapping(value = "/{id}", produces = "application/json")
     public
     @ResponseBody
-    UserDTO getUserById(@PathVariable("id") int userId) throws IdException, UserNotFoundException {
+    UserDTO getUserById(@PathVariable("id") Long userId) throws IdException, UserNotFoundException {
         if (userId < 0) {
             throw new IdException("Incorrect Id");
         }
@@ -80,7 +80,7 @@ public class UsersController {
     @PutMapping(value = "/{id}", consumes = {"application/json"}, produces = "application/json")
     public
     @ResponseBody
-    UserDTO updateUser(@PathVariable("id") int id,
+    UserDTO updateUser(@PathVariable("id") Long id,
                        @RequestBody @Valid UserDTO user) throws IdException, UserNotFoundException {
         if (id <= 0) {
             throw new IdException("Incorrect Id");
@@ -99,7 +99,7 @@ public class UsersController {
     @DeleteMapping(value = "/{id}", produces = "application/json")
     public
     @ResponseBody
-    UserDTO deleteUser(@PathVariable("id") int userId) throws IdException, UserNotFoundException {
+    UserDTO deleteUser(@PathVariable("id") Long userId) throws IdException, UserNotFoundException {
         if (userId <= 0) {
             throw new IdException("Incorrect Id");
         }

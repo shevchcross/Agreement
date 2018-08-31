@@ -1,9 +1,7 @@
 package me.alexeyshevchenko.agreement_backend.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -18,7 +16,7 @@ public class UserDTO {
     @Size(min=6, max=30)
     private String password;
 
-    private int id;
+    private long id;
     @NotNull
     @Size(min=3, max=30)
     private String lastName;
@@ -26,7 +24,7 @@ public class UserDTO {
     @Size(min=3, max=30)
     private String firstName;
 
-    public UserDTO(@NotNull @Size(min = 8, max = 30) String login, @NotNull @Size(min = 6, max = 30) String password, @NotNull @Min(0) int id, @NotNull @Size(min = 3, max = 30) String lastName, @NotNull @Size(min = 3, max = 30) String firstName) {
+    public UserDTO(@NotNull @Size(min = 8, max = 30) String login, @NotNull @Size(min = 6, max = 30) String password, long id, @NotNull @Size(min = 3, max = 30) String lastName, @NotNull @Size(min = 3, max = 30) String firstName) {
         this.login = login;
         this.password = password;
         this.id = id;
@@ -68,11 +66,11 @@ public class UserDTO {
         this.firstName = firstName;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
