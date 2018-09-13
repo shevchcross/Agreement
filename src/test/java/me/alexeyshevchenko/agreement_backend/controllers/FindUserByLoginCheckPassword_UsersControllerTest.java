@@ -88,7 +88,7 @@ public class FindUserByLoginCheckPassword_UsersControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users/auth")
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.findUserByLogin(Mockito.any())).thenReturn(savedUser);
+        Mockito.when(usersService.findUserByLogin(Mockito.any())).thenReturn(usersService.findUserByLogin(user.getLogin()));
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
@@ -105,7 +105,7 @@ public class FindUserByLoginCheckPassword_UsersControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users/auth")
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.findUserByLogin(Mockito.any())).thenReturn(savedUser);
+        Mockito.when(usersService.findUserByLogin(Mockito.any())).thenReturn(usersService.findUserByLogin(user.getLogin()));
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
@@ -130,7 +130,7 @@ public class FindUserByLoginCheckPassword_UsersControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users/auth")
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.findUserByLogin(Mockito.any())).thenReturn(savedUser);
+        Mockito.when(usersService.findUserByLogin(Mockito.any())).thenReturn(usersService.findUserByLogin(user.getLogin()));
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
@@ -154,7 +154,7 @@ public class FindUserByLoginCheckPassword_UsersControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/users/auth")
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.findUserByLogin(Mockito.any())).thenReturn(savedUser);
+        Mockito.when(usersService.findUserByLogin(Mockito.any())).thenReturn(usersService.findUserByLogin(user.getLogin()));
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))

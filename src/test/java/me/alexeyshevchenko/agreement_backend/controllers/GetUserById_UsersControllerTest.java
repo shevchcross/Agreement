@@ -6,17 +6,21 @@ import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import me.alexeyshevchenko.agreement_backend.services.UsersService;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,9 +39,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 /**
  * Created by ${Aleksey} on 08.08.2018.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = App.class)
-@WebAppConfiguration
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@AutoConfigureMockMvc
 public class GetUserById_UsersControllerTest {
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
@@ -65,7 +69,7 @@ public class GetUserById_UsersControllerTest {
                 this.mappingJackson2HttpMessageConverter);
     }
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
     }
@@ -73,11 +77,11 @@ public class GetUserById_UsersControllerTest {
     @Test
     public void getUserById() throws Exception {
         UserDTO user = new UserDTO("user1111", "user1111", 1, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(user.getLogin());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
-        savedUser.setPassword(user.getPassword());
+       // savedUser.setPassword(user.getPassword());
         savedUser.setId(user.getId());
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/"+user.getId())
@@ -90,17 +94,17 @@ public class GetUserById_UsersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.login", Matchers.is(user.getLogin())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.password", Matchers.nullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(user.getLastName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(user.getId())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is((int)user.getId())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(user.getFirstName())));
     }
     @Test
     public void getUserByIdWhereIdIsNegativeIfCheck() throws Exception {
         UserDTO user = new UserDTO("user1111", "user1111", -1, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(user.getLogin());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
-        savedUser.setPassword(user.getPassword());
+       // savedUser.setPassword(user.getPassword());
         savedUser.setId(user.getId());
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/"+ user.getId())
@@ -118,11 +122,11 @@ public class GetUserById_UsersControllerTest {
     @Test
     public void getUserByIdNotFoundId() throws Exception {
         UserDTO user = new UserDTO("user1111", "user1111", 10, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(user.getLogin());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
-        savedUser.setPassword(user.getPassword());
+       // savedUser.setPassword(user.getPassword());
         savedUser.setId(12);
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/" + user.getId())

@@ -22,7 +22,7 @@ public class UserEntity {
     @Column(name = "LOGIN_MY_USER_ENTITY")
     private String login;
     @NotNull
-    @Size(min=6, max=30)
+    @Size(min=6)
     @Column(name = "PASSWORD_MY_USER_ENTITY")
     private String password;
     @NotNull
@@ -36,6 +36,14 @@ public class UserEntity {
     @NotNull
     @Column(name = "SALT_MY_USER_ENTITY")
     private String salt;
+
+    public UserEntity(@NotNull @Size(min = 8, max = 30) String login, @NotNull @Size(min = 6, max = 30) String password, @NotNull @Size(min = 3, max = 30) String lastName, @NotNull @Size(min = 3, max = 30) String firstName, @NotNull String salt) {
+        this.login = login;
+        this.password = password;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.salt = salt;
+    }
 
     public UserEntity() {
     }

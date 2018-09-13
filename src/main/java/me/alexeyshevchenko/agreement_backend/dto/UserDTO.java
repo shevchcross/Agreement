@@ -24,15 +24,22 @@ public class UserDTO {
     @Size(min=3, max=30)
     private String firstName;
 
-    public UserDTO(@NotNull @Size(min = 8, max = 30) String login, @NotNull @Size(min = 6, max = 30) String password, long id, @NotNull @Size(min = 3, max = 30) String lastName, @NotNull @Size(min = 3, max = 30) String firstName) {
+    public UserDTO(String login,  String password, long id, String lastName,  String firstName) {
         this.login = login;
         this.password = password;
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
+            }
+
+    public UserDTO(String login, String password, String lastName, String firstName) {
+        this.login = login;
+        this.password = password;
+        this.lastName = lastName;
+        this.firstName = firstName;
     }
 
-    public UserDTO(String login, String password, int id) {
+    public UserDTO(String login, String password, long id) {
         this.login = login;
         this.password = password;
         this.id = id;

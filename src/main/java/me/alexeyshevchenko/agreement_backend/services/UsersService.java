@@ -8,9 +8,11 @@ import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import me.alexeyshevchenko.agreement_backend.repository.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 
@@ -21,36 +23,47 @@ import java.util.regex.Pattern;
 public class UsersService {
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private UserEntityRepository userEntityRepository;
 
-    public UserEntity createUser(UserEntity user) {
-        return userEntityRepository.save(user);
+    public UserDTO createUser(UserDTO user) {
+        String password = user.getPassword();
+        String salt = UUID.randomUUID().toString();
+        String hashedPassword = passwordEncoder.encode(password + salt);
+        user.setPassword(hashedPassword);
+        UserEntity userToSave = new UserEntity(user);
+        userToSave.setSalt(salt);
+        UserEntity savedUser = userEntityRepository.save(userToSave);
+        return new UserDTO(savedUser);
     }
 
-    public UserEntity getUserById(Long id) throws UserNotFoundException {
-        return userEntityRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+    public UserDTO getUserById(Long id) throws UserNotFoundException {
+        Optional<UserEntity> user = userEntityRepository.findById(id);
+        UserEntity userEntity = user.orElseThrow(() -> new UserNotFoundException("User not found"));
+        return new UserDTO(userEntity);
     }
 
-    public UserEntity findUserByLogin(String login) throws LoginPasswordException {
-        return userEntityRepository.findByLogin(login);
+    public UserDTO findUserByLogin(String login) throws LoginPasswordException {
+        Optional<UserEntity> user = userEntityRepository.findByLogin(login);
+        UserEntity userEntity = user.orElseThrow(() -> new LoginPasswordException("User not found"));
+        return new UserDTO(userEntityRepository.findByLogin(login).get());
     }
 
-    public UserEntity updateUser(UserEntity user) throws IdException, UserNotFoundException {
-        UserEntity oldUser = getUserById(user.getId());
+    public UserDTO updateUser(UserDTO user) throws IdException, UserNotFoundException {
+        UserEntity oldUser = userEntityRepository.findById(user.getId())
+                .orElseThrow(() -> new UserNotFoundException(user.getId()));
         oldUser.setFirstName(user.getFirstName());
         oldUser.setLastName(user.getLastName());
         userEntityRepository.save(oldUser);
-        return oldUser;
+        return new UserDTO(oldUser);
     }
 
-    public UserEntity deleteUser(Long id) throws UserNotFoundException {
+    public UserDTO deleteUser(Long id) throws UserNotFoundException {
         Optional<UserEntity> existedUser = userEntityRepository.findById(id);
-        UserEntity user = existedUser.orElseThrow(() -> new UserNotFoundException("User not Found"));
+        UserEntity user = existedUser.orElseThrow(() -> new UserNotFoundException(id));
         userEntityRepository.delete(user);
-        return user;
+        return new UserDTO(user);
     }
-
-    ;
-
 }

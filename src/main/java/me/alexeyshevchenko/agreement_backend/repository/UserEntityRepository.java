@@ -1,8 +1,11 @@
 package me.alexeyshevchenko.agreement_backend.repository;
 
+import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
 import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 /**
  * Created by ${Aleksey} on 30.08.2018.
@@ -10,5 +13,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserEntityRepository extends CrudRepository<UserEntity, Long> {
 
-    UserEntity findByLogin(String login);
+    Optional<UserEntity> findByLogin(String login);
 }

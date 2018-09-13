@@ -1,29 +1,29 @@
 package me.alexeyshevchenko.agreement_backend.controllers;
 
-import me.alexeyshevchenko.agreement_backend.App;
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
 import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import me.alexeyshevchenko.agreement_backend.services.UsersService;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
+
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -35,9 +35,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 /**
  * Created by ${Aleksey} on 07.08.2018.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = App.class)
-@WebAppConfiguration
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@AutoConfigureMockMvc
 public class FindUserByLogin_UsersControllerTest {
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
@@ -65,7 +65,7 @@ public class FindUserByLogin_UsersControllerTest {
                 this.mappingJackson2HttpMessageConverter);
     }
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
     }
@@ -73,11 +73,12 @@ public class FindUserByLogin_UsersControllerTest {
     @Test
     public void findUserByLogin() throws Exception {
         UserDTO user = new UserDTO("user1111", "user1111",1, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(user.getLogin());
+        savedUser.setId(user.getId());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
-        savedUser.setPassword(user.getPassword());
+        //savedUser.setPassword(user.getPassword());
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/bylogin/" + user.getLogin())
                 .contentType(contentType)
@@ -94,11 +95,11 @@ public class FindUserByLogin_UsersControllerTest {
     @Test
     public void findUserByLoginLoginLessThenThree() throws Exception {
         UserDTO user = new UserDTO("us", "user1111",1, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(user.getLogin());
+        savedUser.setId(user.getId());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
-        savedUser.setPassword(user.getPassword());
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/bylogin/" + user.getLogin())
                 .contentType(contentType)
@@ -115,11 +116,11 @@ public class FindUserByLogin_UsersControllerTest {
     @Test
     public void findUserByLoginLoginMoreThenThirty() throws Exception {
         UserDTO user = new UserDTO("12345678901234567890123456789012", "user1111",1, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(user.getLogin());
+        savedUser.setId(user.getId());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
-        savedUser.setPassword(user.getPassword());
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/bylogin/" + user.getLogin())
                 .contentType(contentType)
@@ -136,7 +137,7 @@ public class FindUserByLogin_UsersControllerTest {
     @Test
     public void findUserByLoginSavedUserIsNull() throws Exception {
         UserDTO user = new UserDTO("123456789012", "user1111",1, "Ivanov", "Ivan");
-        UserEntity savedUser = null;
+        UserDTO savedUser = null;
               String userJson = json(user);
               MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/bylogin/" + user.getLogin())
                 .contentType(contentType)
@@ -154,11 +155,11 @@ public class FindUserByLogin_UsersControllerTest {
     @Test
     public void findUserByLoginJsonIsSomeTextWithSpesSimbol() throws Exception {
         UserDTO user = new UserDTO("user$1*111", "user1111",1, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(user.getLogin());
+        savedUser.setId(user.getId());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
-        savedUser.setPassword(user.getPassword());
         String userJson = json(user);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/users/bylogin/"+user.getLogin())
                 .contentType(contentType)

@@ -1,24 +1,22 @@
 package me.alexeyshevchenko.agreement_backend.controllers;
 
-import me.alexeyshevchenko.agreement_backend.App;
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
-import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import me.alexeyshevchenko.agreement_backend.services.UsersService;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -34,9 +32,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 /**
  * Created by ${Aleksey} on 03.08.2018.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = App.class)
-@WebAppConfiguration
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@AutoConfigureMockMvc
 public class CreateUser_UsersControllerTests {
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
@@ -44,6 +42,7 @@ public class CreateUser_UsersControllerTests {
             Charset.forName("utf8"));//
 
     private MockMvc mockMvc;
+
 
     private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
@@ -65,15 +64,17 @@ public class CreateUser_UsersControllerTests {
                 this.mappingJackson2HttpMessageConverter);
     }
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
+       // this.mockMvc =  MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+
     }
 
     @Test
     public void createUserSuccessful() throws Exception {
         UserDTO user = new UserDTO("user1111", "user1111", 1, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(user.getLogin());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
@@ -93,7 +94,7 @@ public class CreateUser_UsersControllerTests {
     @Test
     public void createUserWhenLoginToShort() throws Exception {
         UserDTO user = new UserDTO("user", "user1111", 1, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(user.getLogin());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
@@ -115,7 +116,7 @@ public class CreateUser_UsersControllerTests {
     @Test
     public void createUserWhenPasswordTooShort() throws Exception {
         UserDTO user = new UserDTO("user", "user", 1, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(user.getLogin());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
@@ -138,7 +139,7 @@ public class CreateUser_UsersControllerTests {
     @Test
     public void createUserWhenPasswordNull() throws Exception {
         UserDTO user = new UserDTO("user", null, 1, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(user.getLogin());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
@@ -160,7 +161,7 @@ public class CreateUser_UsersControllerTests {
     @Test
     public void createUserWhenLoginNull() throws Exception {
         UserDTO user = new UserDTO(null, "user", 1, "Ivanov", "Ivan");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(user.getLogin());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
@@ -186,4 +187,6 @@ public class CreateUser_UsersControllerTests {
                 o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
         return mockHttpOutputMessage.getBodyAsString();
     }
+
+
 }

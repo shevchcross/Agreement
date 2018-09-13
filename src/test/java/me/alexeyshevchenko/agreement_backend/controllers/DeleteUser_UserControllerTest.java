@@ -5,17 +5,21 @@ import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import me.alexeyshevchenko.agreement_backend.services.UsersService;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,9 +37,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * Created by ${Aleksey} on 13.08.2018.
  */
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = App.class)
-@WebAppConfiguration
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@AutoConfigureMockMvc
 public class DeleteUser_UserControllerTest {
           private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
                 MediaType.APPLICATION_JSON.getSubtype(),
@@ -63,7 +67,7 @@ public class DeleteUser_UserControllerTest {
                     this.mappingJackson2HttpMessageConverter);
         }
 
-        @Before
+        @BeforeEach
         public void setup() throws Exception {
             this.mockMvc = webAppContextSetup(webApplicationContext).build();
         }
@@ -71,14 +75,13 @@ public class DeleteUser_UserControllerTest {
         @Test
         public void deleteUserById() throws Exception {
             UserDTO user = new UserDTO("user1111", "user1111", 1, "Aleks", "Ivanov");
-            UserEntity savedUser = new UserEntity();
+            UserDTO savedUser = new UserDTO();
             savedUser.setLogin(user.getLogin());
-            savedUser.setPassword(user.getPassword());
             savedUser.setId(user.getId());
             savedUser.setFirstName(user.getFirstName());
             savedUser.setLastName(user.getLastName());
             MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/users/"+user.getId());
-            Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+            Mockito.when(usersService.getUserById(Mockito.anyLong())).thenReturn(savedUser);
             mockMvc.perform(request)
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(MockMvcResultMatchers.content().contentType(contentType))
@@ -95,7 +98,7 @@ public class DeleteUser_UserControllerTest {
             MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/users/"+user.getId())
                     .contentType(contentType)
                     .content(userJson);
-            Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(null);
+            Mockito.when(usersService.getUserById(Mockito.anyLong())).thenReturn(null);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
@@ -107,14 +110,14 @@ public class DeleteUser_UserControllerTest {
     @Test
     public void deleteUserByIdWhenIDLess0() throws Exception {
         UserDTO user = new UserDTO("user1111", "user1111", -1, "Aleks", "Ivanov");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(user.getLogin());
         savedUser.setPassword(user.getPassword());
         savedUser.setId(user.getId());
         savedUser.setFirstName(user.getFirstName());
         savedUser.setLastName(user.getLastName());
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/users/"+user.getId());
-        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.getUserById(Mockito.anyLong())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))

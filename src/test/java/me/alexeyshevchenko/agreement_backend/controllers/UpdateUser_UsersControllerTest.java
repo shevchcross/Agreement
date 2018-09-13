@@ -6,17 +6,22 @@ import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import me.alexeyshevchenko.agreement_backend.services.UsersService;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,9 +40,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * Created by ${Aleksey} on 08.08.2018.
  */
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = App.class)
-@WebAppConfiguration
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@AutoConfigureMockMvc
 public class UpdateUser_UsersControllerTest {
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
@@ -65,7 +70,7 @@ public class UpdateUser_UsersControllerTest {
                 this.mappingJackson2HttpMessageConverter);
     }
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
     }
@@ -73,7 +78,7 @@ public class UpdateUser_UsersControllerTest {
     @Test
     public void updateUser() throws Exception {
         UserDTO userToUpdate = new UserDTO("user1111", "user1111", 1, "Aleks", "Ivanov");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(userToUpdate.getLogin());
         savedUser.setPassword(userToUpdate.getPassword());
         savedUser.setId(userToUpdate.getId());
@@ -83,7 +88,7 @@ public class UpdateUser_UsersControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/users/"+  userToUpdate.getId())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.getUserById(Mockito.anyLong())).thenReturn(savedUser);
         Mockito.when(usersService.updateUser(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -94,7 +99,7 @@ public class UpdateUser_UsersControllerTest {
     @Test
     public void updateUserIdIsNegative() throws Exception {
         UserDTO userToUpdate = new UserDTO("user1111", "user1111", -1, "Aleks", "Ivanov");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(userToUpdate.getLogin());
         savedUser.setPassword(userToUpdate.getPassword());
         savedUser.setId(userToUpdate.getId());
@@ -104,7 +109,7 @@ public class UpdateUser_UsersControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/users/"+  userToUpdate.getId())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.getUserById(Mockito.anyLong())).thenReturn(savedUser);
         Mockito.when(usersService.updateUser(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
@@ -117,7 +122,7 @@ public class UpdateUser_UsersControllerTest {
     @Test
     public void updateUserlastNameNotValid() throws Exception {
         UserDTO userToUpdate = new UserDTO("user1111", "user1111", -1, "Al", "Ivanov");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(userToUpdate.getLogin());
         savedUser.setPassword(userToUpdate.getPassword());
         savedUser.setId(userToUpdate.getId());
@@ -127,7 +132,7 @@ public class UpdateUser_UsersControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/users/"+  userToUpdate.getId())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.getUserById(Mockito.anyLong())).thenReturn(savedUser);
         Mockito.when(usersService.updateUser(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
@@ -140,7 +145,7 @@ public class UpdateUser_UsersControllerTest {
     public void updateUserFirstNameNotValid() throws Exception {
         UserDTO userToUpdate = new UserDTO("user1111", "user1111", -1, "Aleksey", "Iv");
         UserDTO userFromStorage = new UserDTO("user1111", "user1111", -1, "Aleksey", "Iv");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(userToUpdate.getLogin());
         savedUser.setPassword(userToUpdate.getPassword());
         savedUser.setId(userToUpdate.getId());
@@ -150,7 +155,7 @@ public class UpdateUser_UsersControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/users/"+  userToUpdate.getId())
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.getUserById(Mockito.anyLong())).thenReturn(savedUser);
         Mockito.when(usersService.updateUser(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
@@ -162,7 +167,7 @@ public class UpdateUser_UsersControllerTest {
     @Test
     public void updateUserNonexistent() throws Exception {
         UserDTO userToUpdate = new UserDTO("user1111", "user1111", 1, "Aleksey", "Ivanov");
-         UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(userToUpdate.getLogin());
         savedUser.setPassword(userToUpdate.getPassword());
         savedUser.setId(userToUpdate.getId());
@@ -172,7 +177,7 @@ public class UpdateUser_UsersControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/users/"+  (userToUpdate.getId()+1))
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.getUserById(Mockito.anyLong())).thenReturn(savedUser);
         Mockito.when(usersService.updateUser(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
@@ -185,7 +190,7 @@ public class UpdateUser_UsersControllerTest {
     @Test
     public void updateUserIdIncorect() throws Exception {
         UserDTO userToUpdate = new UserDTO("user1111", "user1111", 1, "Aleksey", "Ivanov");
-        UserEntity savedUser = new UserEntity();
+        UserDTO savedUser = new UserDTO();
         savedUser.setLogin(userToUpdate.getLogin());
         savedUser.setPassword(userToUpdate.getPassword());
         savedUser.setId(userToUpdate.getId());
@@ -195,7 +200,7 @@ public class UpdateUser_UsersControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/users/" +(-2))
                 .contentType(contentType)
                 .content(userJson);
-        Mockito.when(usersService.getUserById(Mockito.anyInt())).thenReturn(savedUser);
+        Mockito.when(usersService.getUserById(Mockito.anyLong())).thenReturn(savedUser);
         Mockito.when(usersService.updateUser(Mockito.any())).thenReturn(savedUser);
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
