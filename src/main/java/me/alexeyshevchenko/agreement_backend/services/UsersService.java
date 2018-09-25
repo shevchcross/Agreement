@@ -7,13 +7,15 @@ import me.alexeyshevchenko.agreement_backend.errors.UserNotFoundException;
 import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import me.alexeyshevchenko.agreement_backend.repository.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 /**
@@ -66,4 +68,14 @@ public class UsersService {
         userEntityRepository.delete(user);
         return new UserDTO(user);
     }
+
+    public List<UserDTO> findAllUsers(int pageNumber, int pageSize) {
+        PageRequest request = PageRequest.of(pageNumber, pageSize);
+        List<UserEntity> userEntities = userEntityRepository.findAll(request).getContent();
+        return userEntities.stream()
+                .map(UserDTO::new)
+                .collect(Collectors.toList());
+    }
+
+
 }

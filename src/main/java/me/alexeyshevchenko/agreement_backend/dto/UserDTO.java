@@ -12,11 +12,13 @@ public class UserDTO {
     @NotNull
     @Size(min=8, max=30)
     private String login;
+
     @NotNull
     @Size(min=6, max=30)
     private String password;
 
     private long id;
+
     @NotNull
     @Size(min=3, max=30)
     private String lastName;

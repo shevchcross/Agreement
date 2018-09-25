@@ -1,35 +1,44 @@
 package me.alexeyshevchenko.agreement_backend.controllers;
 
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
+import me.alexeyshevchenko.agreement_backend.errors.PagingAndSortingException;
 import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import me.alexeyshevchenko.agreement_backend.services.UsersService;
 import me.alexeyshevchenko.agreement_backend.errors.IdException;
 import me.alexeyshevchenko.agreement_backend.errors.LoginPasswordException;
 import me.alexeyshevchenko.agreement_backend.errors.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
+import static java.lang.Integer.parseInt;
 
 /**
  * Created by ${Aleksey} on 03.08.2018.
  */
 @RequestMapping("/users")
 @RestController
+@Validated
 public class UsersController {
 
     @Autowired(required = false)
     private UsersService usersService;
 
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    //region Create User
     @PostMapping()
     public
     @ResponseBody
@@ -39,7 +48,9 @@ public class UsersController {
         }
         return usersService.createUser(user);
     }
+    //endregion
 
+    //region Find User By Login
     @GetMapping(value = "/bylogin/{login}", consumes = {"application/json"})
     public
     @ResponseBody
@@ -54,6 +65,9 @@ public class UsersController {
         return  userByLogin;
     }
 
+    //endregion
+
+    //region Find User By Id
     @GetMapping(value = "/{id}", produces = "application/json")
     public
     @ResponseBody
@@ -68,6 +82,7 @@ public class UsersController {
             throw new UserNotFoundException("User not found");
         }
     }
+    //endregion
 
     @PutMapping(value = "/{id}", consumes = {"application/json"}, produces = "application/json")
     public
@@ -105,7 +120,8 @@ public class UsersController {
     @PostMapping(value = "/auth")
     public
     @ResponseBody
-    UserDTO findUserByLoginCheckPassword(@RequestBody @Valid UserDTO user, BindingResult result) throws LoginPasswordException, UserNotFoundException {
+    UserDTO findUserByLoginCheckPassword(@RequestBody @Valid UserDTO user, BindingResult result)
+            throws LoginPasswordException, UserNotFoundException {
         if (result.hasErrors()) {
             throw new LoginPasswordException("Incorrect Login, Please check and try again");
        }
@@ -120,7 +136,16 @@ public class UsersController {
         } else {
             throw new LoginPasswordException("Incorect password");
         }
+    }
 
+    @GetMapping()
+    public
+    @ResponseBody
+    List<UserDTO> findAllUsers(@RequestParam(value = "pageNumber" ,defaultValue = "1")
+                                       @Valid @Min(value = 1, message = "Page number should be more or equal 1") int pageNumber,
+                               @RequestParam(value = "pageSize", defaultValue = "20")
+                               @Valid @Min(value = 10, message = "Page size should be more or equal 10") int pageSize) {
+        return  usersService.findAllUsers(pageNumber, pageSize);
     }
 }
 

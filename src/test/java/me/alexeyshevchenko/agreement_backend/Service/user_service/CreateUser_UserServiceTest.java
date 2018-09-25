@@ -1,29 +1,22 @@
 package me.alexeyshevchenko.agreement_backend.Service.user_service;
 
-import me.alexeyshevchenko.agreement_backend.App;
+
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
 import me.alexeyshevchenko.agreement_backend.errors.LoginPasswordException;
 import me.alexeyshevchenko.agreement_backend.errors.UserNotFoundException;
-import me.alexeyshevchenko.agreement_backend.models.UserEntity;
 import me.alexeyshevchenko.agreement_backend.repository.UserEntityRepository;
 import me.alexeyshevchenko.agreement_backend.services.UsersService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.support.NullValue;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-import java.util.UUID;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by ${Aleksey} on 31.08.2018.
@@ -137,6 +130,35 @@ public class CreateUser_UserServiceTest {
         assertThrows(LoginPasswordException.class,
                 ()->{
                     usersService.findUserByLogin(user.getLogin());;
-                });
+                });}
+
+        @Test
+        public void findAllUsers() throws Exception{
+            UserDTO user = new UserDTO("Login1234", "password123", "LastName1",
+                    "FirstName1");
+            UserDTO user1 = new UserDTO("Login12345", "password123", "LastName2",
+                    "FirstName2");
+            UserDTO user2 = new UserDTO("Login123456", "password123", "LastName3",
+                    "FirstName3");
+            UserDTO user3 = new UserDTO("Login123478", "password123", "LastName4",
+                    "FirstName4");
+            UserDTO user4 = new UserDTO("Login1234789", "password123", "LastName5",
+                    "FirstName4");
+            UserDTO user5 = new UserDTO("Login12347891", "password123", "LastName6",
+                    "FirstName4");
+            UserDTO user6 = new UserDTO("Login123478911", "password123", "LastName7",
+                    "FirstName4");
+            UserDTO userFromDB = usersService.createUser(user);
+            UserDTO userFromDB1 = usersService.createUser(user1);
+            UserDTO userFromDB2 = usersService.createUser(user2);
+            UserDTO userFromDB3 = usersService.createUser(user3);
+            UserDTO userFromDB4 = usersService.createUser(user4);
+            UserDTO userFromDB5 = usersService.createUser(user5);
+            UserDTO userFromDB6 = usersService.createUser(user6);
+
+            List <UserDTO> list = usersService.findAllUsers(2,2);
+//            assertThat(list, contains(user));
+//            assertThat(list, contains(user1));
+            assertThat(list, hasSize(2));
     }}
 

@@ -1,4 +1,4 @@
-package me.alexeyshevchenko.agreement_backend.controllers;
+package me.alexeyshevchenko.agreement_backend.user_controllers;
 
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
 import me.alexeyshevchenko.agreement_backend.models.UserEntity;

@@ -1,4 +1,4 @@
-package me.alexeyshevchenko.agreement_backend.controllers;
+package me.alexeyshevchenko.agreement_backend.user_controllers;
 
 import me.alexeyshevchenko.agreement_backend.App;
 import me.alexeyshevchenko.agreement_backend.dto.UserDTO;
