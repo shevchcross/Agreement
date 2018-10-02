@@ -1,4 +1,6 @@
 package me.alexeyshevchenko.agreement_backend.models;
+import me.alexeyshevchenko.agreement_backend.dto.BankDTO;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -41,6 +43,12 @@ public class BankEntity {
         this.mfo = mfo;
     }
 
+    public BankEntity(BankDTO bankDTO) {
+        this.name = bankDTO.getName();
+        this.account1 = bankDTO.getAccount1();
+        this.account2 = bankDTO.getAccount2();
+        this.mfo = bankDTO.getMfo();
+    }
     public long getId() {
         return id;
     }

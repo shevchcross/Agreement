@@ -1,5 +1,7 @@
 package me.alexeyshevchenko.agreement_backend.models;
 
+import me.alexeyshevchenko.agreement_backend.dto.AddressDTO;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -18,12 +20,12 @@ public class AddressEntity {
     private String street;
 
     @NotNull
-    @Size(min=3, max=45)
+    @Size(min=1, max=45)
     @Column(name = "HOME_MY_ADDRESS_ENTITY")
     private String home;
 
     @NotNull
-    @Size(min=3, max=45)
+    @Size(min=1, max=45)
     @Column(name = "APARTMENT_MY_ADDRESS_ENTITY")
     private String apartment;
 
@@ -35,11 +37,18 @@ public class AddressEntity {
     public AddressEntity() {
     }
 
-    public AddressEntity(@NotNull @Size(min = 3, max = 45) String street, @NotNull @Size(min = 3, max = 45) String home, @NotNull @Size(min = 3, max = 45) String apartment, @NotNull @Size(min = 3, max = 45) String city) {
+    public AddressEntity( String street, String home,  String apartment,  String city) {
         this.street = street;
         this.home = home;
         this.apartment = apartment;
         this.city = city;
+    }
+
+    public AddressEntity(AddressDTO addressDTO) {
+        this.street = addressDTO.getStreet();
+        this.home = addressDTO.getHome();
+        this.apartment = addressDTO.getApartment();
+        this.city = addressDTO.getCity();
     }
 
     public long getId() {

@@ -1,6 +1,8 @@
 package me.alexeyshevchenko.agreement_backend.dto;
 
 
+import me.alexeyshevchenko.agreement_backend.models.SpecificationEntity;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
@@ -27,6 +29,12 @@ public class SpecificationDTO {
         this.mesure = mesure;
         this.price = price;
         this.quantity = quantity;
+    }
+    public SpecificationDTO(SpecificationEntity specificationEntity) {
+        this.id = specificationEntity.getId();
+        this.mesure = specificationEntity.getMesure();
+        this.price = specificationEntity.getPrice();
+        this.quantity = specificationEntity.getQuantity();
     }
 
     public long getId() {

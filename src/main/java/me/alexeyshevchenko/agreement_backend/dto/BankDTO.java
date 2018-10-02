@@ -1,6 +1,8 @@
 package me.alexeyshevchenko.agreement_backend.dto;
 
 
+import me.alexeyshevchenko.agreement_backend.models.BankEntity;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -25,6 +27,13 @@ public class BankDTO {
 
     public BankDTO() {
     }
+    public BankDTO(@NotNull @Size(min = 3, max = 45) String name, @NotNull @Size(min = 3, max = 45) String account1, @NotNull @Size(min = 3, max = 45) String account2, @NotNull @Size(min = 6, max = 6) String mfo) {
+        this.id = id;
+        this.name = name;
+        this.account1 = account1;
+        this.account2 = account2;
+        this.mfo = mfo;
+    }
 
     public BankDTO(long id, @NotNull @Size(min = 3, max = 45) String name, @NotNull @Size(min = 3, max = 45) String account1, @NotNull @Size(min = 3, max = 45) String account2, @NotNull @Size(min = 6, max = 6) String mfo) {
         this.id = id;
@@ -32,6 +41,13 @@ public class BankDTO {
         this.account1 = account1;
         this.account2 = account2;
         this.mfo = mfo;
+    }
+    public BankDTO(BankEntity bankEntity) {
+        this.id = bankEntity.getId();
+        this.name = bankEntity.getName();
+        this.account1 = bankEntity.getAccount1();
+        this.account2 = bankEntity.getAccount2();
+        this.mfo = bankEntity.getMfo();
     }
 
     public long getId() {

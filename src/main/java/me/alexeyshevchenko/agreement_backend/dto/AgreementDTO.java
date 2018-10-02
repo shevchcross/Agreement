@@ -1,5 +1,7 @@
 package me.alexeyshevchenko.agreement_backend.dto;
 
+import me.alexeyshevchenko.agreement_backend.models.AgreementEntity;
+
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -28,6 +30,13 @@ public class AgreementDTO {
         this.end = end;
         this.startAmount = startAmount;
         this.currentAmount = currentAmount;
+    }
+    public AgreementDTO(AgreementEntity agreementEntity) {
+        this.id = agreementEntity.getId();
+        this.start = agreementEntity.getStart();
+        this.end = agreementEntity.getEnd();
+        this.startAmount = agreementEntity.getStartAmount();
+        this.currentAmount = agreementEntity.getCurrentAmount();
     }
 
     public long getId() {

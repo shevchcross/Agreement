@@ -1,5 +1,7 @@
 package me.alexeyshevchenko.agreement_backend.dto;
 
+import me.alexeyshevchenko.agreement_backend.models.ClientEntity;
+
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -27,6 +29,12 @@ public class ClientDTO {
         this.name = name;
         this.edrpou = edrpou;
         this.director = director;
+    }
+    public ClientDTO(ClientEntity clientEntity) {
+        this.id = clientEntity.getId();
+        this.name = clientEntity.getName();
+        this.edrpou = clientEntity.getEdrpou();
+        this.director = clientEntity.getDirector();
     }
 
     public long getId() {

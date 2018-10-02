@@ -1,5 +1,7 @@
 package me.alexeyshevchenko.agreement_backend.dto;
 
+import me.alexeyshevchenko.agreement_backend.models.SellerEntity;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -30,6 +32,13 @@ public class SellerDTO {
         this.edrpou = edrpou;
         this.director = director;
         this.nds = nds;
+    }
+    public SellerDTO(SellerEntity sellerEntity) {
+        this.id = sellerEntity.getId();
+        this.name = sellerEntity.getName();
+        this.edrpou = sellerEntity.getEdrpou();
+        this.director = sellerEntity.getDirector();
+        this.nds = sellerEntity.isNds();
     }
 
     public long getId() {
